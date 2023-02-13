@@ -4,7 +4,10 @@ import { User } from "../../../src/models";
 import { MutationCreateOrganizationArgs } from "../../../src/types/generatedGraphQLTypes";
 import { connect, disconnect } from "../../../src/db";
 import { createOrganization as createOrganizationResolver } from "../../../src/resolvers/Mutation/createOrganization";
-import { USER_NOT_FOUND, USER_NOT_FOUND_MESSAGE } from "../../../src/constants";
+import {
+  USER_NOT_AUTHORIZED_MESSAGE,
+  USER_NOT_FOUND_MESSAGE,
+} from "../../../src/constants";
 import { nanoid } from "nanoid";
 import * as uploadImage from "../../../src/utilities/uploadImage";
 import {
@@ -40,30 +43,6 @@ describe("resolvers -> Mutation -> createOrganization", () => {
     vi.resetModules();
   });
   it(`throws NotFoundError if no user exists with _id === context.userId`, async () => {
-    const args: MutationCreateOrganizationArgs = {
-      data: {
-        description: "description",
-        isPublic: true,
-        name: "name",
-        visibleInSearch: true,
-        apiUrl: "apiUrl",
-        location: "location",
-        tags: ["tag"],
-      },
-    };
-
-    const context = {
-      userId: Types.ObjectId().toString(),
-    };
-
-    const { createOrganization } = await import(
-      "../../../src/resolvers/Mutation/createOrganization"
-    );
-    expect(async () => {
-      await createOrganization?.({}, args, context);
-    }).rejects.toThrowError(USER_NOT_FOUND);
-  });
-  it(`throws NotFoundError if no user exists with _id === context.userId and IN_PRODUCTION is true`, async () => {
     const { requestContext } = await import("../../../src/libraries");
     const spy = vi
       .spyOn(requestContext, "translate")
@@ -91,7 +70,6 @@ describe("resolvers -> Mutation -> createOrganization", () => {
         );
         return {
           ...actualConstants,
-          IN_PRODUCTION: true,
         };
       });
       const { createOrganization } = await import(
@@ -104,6 +82,38 @@ describe("resolvers -> Mutation -> createOrganization", () => {
     }
   });
 
+  it(`throws Not Authorised Error if user is not a super admin`, async () => {
+    const { requestContext } = await import("../../../src/libraries");
+    const spy = vi
+      .spyOn(requestContext, "translate")
+      .mockImplementationOnce((message) => message);
+    try {
+      const args: MutationCreateOrganizationArgs = {
+        data: {
+          description: "description",
+          isPublic: true,
+          name: "name",
+          visibleInSearch: true,
+          apiUrl: "apiUrl",
+          location: "location",
+          tags: ["tag"],
+        },
+      };
+
+      const context = {
+        userId: testUser?.id,
+      };
+
+      const { createOrganization } = await import(
+        "../../../src/resolvers/Mutation/createOrganization"
+      );
+      await createOrganization?.({}, args, context);
+    } catch (error: any) {
+      expect(spy).toHaveBeenLastCalledWith(USER_NOT_AUTHORIZED_MESSAGE);
+      expect(error.message).toEqual(USER_NOT_AUTHORIZED_MESSAGE);
+    }
+  });
+
   it(`creates the organization with image and returns it`, async () => {
     vi.spyOn(uploadImage, "uploadImage").mockImplementationOnce(
       async (newImagePath: any, imageAlreadyInDbPath: any) => ({
@@ -111,6 +121,19 @@ describe("resolvers -> Mutation -> createOrganization", () => {
         imageAlreadyInDbPath,
       })
     );
+
+    await User.findOneAndUpdate(
+      {
+        _id: testUser?._id,
+      },
+      {
+        $set: {
+          adminApproved: true,
+          userType: "SUPERADMIN",
+        },
+      }
+    );
+
     const args: MutationCreateOrganizationArgs = {
       data: {
         description: "description",
