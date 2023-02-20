@@ -35,6 +35,9 @@ export const MEMBERSHIP_REQUEST_NOT_FOUND_MESSAGE =
   "membershipRequest.notFound";
 export const MEMBERSHIP_REQUEST_NOT_FOUND_PARAM = "membershipRequest";
 
+export const MEMBERSHIP_REQUEST_ALREADY_EXISTS =
+  "Membership Request already exists";
+
 export const ORGANIZATION_MEMBER_NOT_FOUND =
   "Organization's user is not a member";
 export const ORGANIZATION_MEMBER_NOT_FOUND_CODE =
@@ -93,6 +96,24 @@ export const REGEX_VALIDATION_ERROR = {
   param: "stringValidation",
 };
 
+export const USER_NOT_AUTHORIZED_SUPERADMIN = {
+  message: "Error: Current user must be a SUPERADMIN",
+  code: "role.notValid.superadmin",
+  param: "roleValidationSuperAdmin",
+};
+
+export const USER_NOT_AUTHORIZED_ADMIN = {
+  message: "Error: Current user must be an ADMIN",
+  code: "role.notValid.admin",
+  param: "roleValidationAdmin",
+};
+
+export const USER_BLOCKING_SELF = {
+  message: "Error: Current user cannot block self",
+  code: "user.selfBlock",
+  param: "userSelfBlock",
+};
+
 export const TASK_NOT_FOUND = "Task not found";
 export const TASK_NOT_FOUND_CODE = "task.notFound";
 export const TASK_NOT_FOUND_MESSAGE = "task.notFound";
@@ -126,6 +147,27 @@ export const USER_NOT_FOUND = "User not found";
 export const USER_NOT_FOUND_CODE = "user.notFound";
 export const USER_NOT_FOUND_MESSAGE = "user.notFound";
 export const USER_NOT_FOUND_PARAM = "user";
+
+export const TRANSLATION_ALREADY_PRESENT = "Translation Already Present";
+export const TRANSLATION_ALREADY_PRESENT_CODE = "translation.alreadyPresent";
+export const TRANSLATION_ALREADY_PRESENT_MESSAGE = "translation.alreadyPresent";
+export const TRANSLATION_ALREADY_PRESENT_PARAM = "translationAlreadyPresent";
+
+export const INVALID_CREDENTIALS = "Invalid credentials";
+export const INVALID_CREDENTIALS_CODE = "invalid.credentials";
+export const INVALID_CREDENTIALS_MESSAGE = "invalid.credentials";
+export const INVALID_CREDENTIALS_PARAM = "credentials";
+
+export const INVALID_REFRESH_TOKEN = "Invalid refreshToken";
+export const INVALID_REFRESH_TOKEN_CODE = "invalid.refreshToken";
+export const INVALID_REFRESH_TOKEN_MESSAGE = "invalid.refreshToken";
+export const INVALID_REFRESH_TOKEN_PARAM = "refreshToken";
+
+export const USER_PROFILE_IMAGE_NOT_FOUND = "User profile image not found";
+export const USER_PROFILE_IMAGE_NOT_FOUND_CODE = "user.profileImage.notFound";
+export const USER_PROFILE_IMAGE_NOT_FOUND_MESSAGE =
+  "user.profileImage.notFound";
+export const USER_PROFILE_IMAGE_NOT_FOUND_PARAM = "userProfileImage";
 
 export const EMAIL_ALREADY_EXISTS = "Email already exists";
 export const EMAIL_ALREADY_EXISTS_CODE = "email.alreadyExists";
