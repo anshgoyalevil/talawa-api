@@ -23,6 +23,7 @@ If you are new to contributing to open source, please read the Open Source Guide
       - [Linting code files](#linting-code-files)
       - [Formatting code files](#formatting-code-files)
       - [Automation using husky](#automation-using-husky)
+      - [Running Queries with talawa-api](#running-queries-with-talawa-api)
   - [Internships](#internships)
     - [GSoC](#gsoc)
   - [Community](#community)
@@ -99,7 +100,7 @@ The process of proposing a change to Talawa API can be summarized as:
       3. Here are some useful testing resources:
          1. Documentation:
             1. [Jest testing documentation](https://jestjs.io/docs/expect)
-            2. The [organizations.spec.js](tests/resolvers/organization_query/organizations.spec.js) test file is a well documented example of what to do for resolver tests.
+            2. The [organizations.spec.ts](tests/resolvers/Query/organizations.spec.ts) test file is a well documented example of what to do for resolver tests.
          2. Videos:
             1. [Introduction To Testing In JavaScript With Jest](https://www.youtube.com/watch?v=FgnxcUQ5vho)
             2. [Jest Crash Course](https://www.youtube.com/watch?v=7r4xVDI2vho)
@@ -228,7 +229,13 @@ We are using the package `Husky` to run a pre-commit hook which automatically ru
 If you don't want these pre-commit checks running on each commit, you can manually opt out of it using the `--no-verify` flag with your commit message as shown:-
 
         git commit -m "commit message" --no-verify
-
+        
+### Running Queries with talawa-api
+   - Talawa API currently implement `GraphQL Playground` as mediator interface to run and test queries directly from the api. [Learn more](https://www.apollographql.com/docs/apollo-server/v2/testing/graphql-playground/)
+   - In development, Apollo Server enables GraphQL Playground on the same URL as the GraphQL server itself (e.g. http://localhost:4000/graphql) and automatically serves the GUI to web browsers. When NODE_ENV is set to production, GraphQL Playground (as well as introspection) is disabled as a production best-practice.
+    ![image](https://user-images.githubusercontent.com/65951872/221374309-5a6eee74-c0df-4280-a29a-0b8d2c7260b3.png)
+- Note: To access the playground in talawa API append the URL with "/graphql"
+   
 ## Internships
 
 We have internship partnerships with a number of organizations. See below for more details.
