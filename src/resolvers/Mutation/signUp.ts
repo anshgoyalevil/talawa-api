@@ -1,11 +1,12 @@
 import bcrypt from "bcryptjs";
 import {
-  IN_PRODUCTION,
   //LENGTH_VALIDATION_ERROR,
-  ORGANIZATION_NOT_FOUND,
   ORGANIZATION_NOT_FOUND_CODE,
   ORGANIZATION_NOT_FOUND_MESSAGE,
   ORGANIZATION_NOT_FOUND_PARAM,
+  EMAIL_ALREADY_EXISTS_MESSAGE,
+  EMAIL_ALREADY_EXISTS_CODE,
+  EMAIL_ALREADY_EXISTS_PARAM,
   //REGEX_VALIDATION_ERROR,
 } from "../../constants";
 import { MutationResolvers } from "../../types/generatedGraphQLTypes";
@@ -14,10 +15,10 @@ import { User, Organization } from "../../models";
 import {
   createAccessToken,
   createRefreshToken,
-  uploadImage,
   copyToClipboard,
 } from "../../utilities";
 import { androidFirebaseOptions, iosFirebaseOptions } from "../../config";
+import { uploadEncodedImage } from "../../utilities/encodedImageStorage/uploadEncodedImage";
 //import { isValidString } from "../../libraries/validators/validateString";
 //import { validatePassword } from "../../libraries/validators/validatePassword";
 
@@ -28,11 +29,9 @@ export const signUp: MutationResolvers["signUp"] = async (_parent, args) => {
 
   if (userWithEmailExists === true) {
     throw new errors.ConflictError(
-      IN_PRODUCTION !== true
-        ? "Email already exists"
-        : requestContext.translate("email.alreadyExists"),
-      "email.alreadyExists",
-      "email"
+      requestContext.translate(EMAIL_ALREADY_EXISTS_MESSAGE),
+      EMAIL_ALREADY_EXISTS_CODE,
+      EMAIL_ALREADY_EXISTS_PARAM
     );
   }
 
@@ -45,9 +44,7 @@ export const signUp: MutationResolvers["signUp"] = async (_parent, args) => {
 
     if (!organization) {
       throw new errors.NotFoundError(
-        IN_PRODUCTION !== true
-          ? ORGANIZATION_NOT_FOUND
-          : requestContext.translate(ORGANIZATION_NOT_FOUND_MESSAGE),
+        requestContext.translate(ORGANIZATION_NOT_FOUND_MESSAGE),
         ORGANIZATION_NOT_FOUND_CODE,
         ORGANIZATION_NOT_FOUND_PARAM
       );
@@ -102,20 +99,16 @@ export const signUp: MutationResolvers["signUp"] = async (_parent, args) => {
   const hashedPassword = await bcrypt.hash(args.data.password, 12);
 
   // Upload file
-  let uploadImageObj;
+  let uploadImageFileName;
   if (args.file) {
-    uploadImageObj = await uploadImage(args.file, null);
+    uploadImageFileName = await uploadEncodedImage(args.file, null);
   }
 
   const createdUser = await User.create({
     ...args.data,
     organizationUserBelongsTo: organization ? organization._id : null,
     email: args.data.email.toLowerCase(), // ensure all emails are stored as lowercase to prevent duplicated due to comparison errors
-    image: uploadImageObj
-      ? uploadImageObj.imageAlreadyInDbPath
-        ? uploadImageObj.imageAlreadyInDbPath
-        : uploadImageObj.newImagePath
-      : null,
+    image: uploadImageFileName ? uploadImageFileName : null,
     password: hashedPassword,
   });
 
