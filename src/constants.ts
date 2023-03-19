@@ -178,10 +178,23 @@ export const INVALID_TAG_INPUT = {
 };
 
 export const INCORRECT_TAG_INPUT = {
-  MESSAGE:
-    "The tag does not belong to the organization provided. Try sending only one correct PARAMeter.",
+  MESSAGE: "The tag does not belong to the organization provided.",
   CODE: "invalidArgs.tag",
   PARAM: "invalidArgs.tag",
+};
+
+export const NO_CHANGE_IN_TAG_NAME = {
+  MESSAGE:
+    "The tag name is the already set to the value it is being requested to be changed to.",
+  CODE: "invalidArgs.tagName",
+  PARAM: "invalidArgs.tagName",
+};
+
+export const TAG_ALREADY_EXISTS = {
+  MESSAGE:
+    "A tag with the same name and the same parent tag already exists for this organization.",
+  CODE: "tag.alreadyExists",
+  PARAM: "tag.alreadyExists",
 };
 
 export const USER_NOT_AUTHORIZED_TO_CREATE_TAG = {
@@ -259,6 +272,7 @@ export const EMAIL_ALREADY_EXISTS_ERROR = {
   MESSAGE: "email.alreadyExists",
   PARAM: "email",
 };
+
 export const BASE_URL = `http://localhost:${process.env.port || 4000}/`;
 
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
